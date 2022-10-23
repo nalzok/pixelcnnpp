@@ -1,6 +1,6 @@
 ## PixelCNN++ image modelling
 
-Forked from https://github.com/google/flax/tree/6690f0c0a50c0d37f42507bbd088fd8ca0c9c01a/examples/pixelcnn by https://github.com/j-towns
+Forked from [an Flax example](https://github.com/google/flax/tree/6690f0c0a50c0d37f42507bbd088fd8ca0c9c01a/examples/pixelcnn) by [@j-towns](https://github.com/j-towns)
 
 ------
 
