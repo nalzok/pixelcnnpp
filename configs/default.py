@@ -54,6 +54,7 @@ def get_config():
 
     # Batch size for sampling.
     config.sample_batch_size = 256
+
     # Random number generator seed for sampling.
     config.sample_rng_seed = 0
 

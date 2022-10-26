@@ -56,9 +56,7 @@ def generate_sample(config: ml_collections.ConfigDict, workdir: str):
     # Generate sample using fixed-point iteration
     sample_rng, sample = sample_iteration(sample_rng, state, sample_prev)
     while jnp.any(sample != sample_prev):
-        sample_prev, (_, sample) = sample, sample_iteration(
-            sample_rng, state, sample
-        )
+        sample_prev, (_, sample) = sample, sample_iteration(sample_rng, state, sample)
     return jnp.reshape(sample, (batch_size, 32, 32, 3))
 
 
@@ -84,9 +82,7 @@ def conditional_params_to_sample(rng, conditional_params):
 @jax.pmap
 def sample_iteration(rng, state, sample):
     """PixelCNN++ sampling expressed as a fixed-point iteration."""
-    out = state.apply_fn(
-        state.params, sample, train=False
-    )
+    out = state.apply_fn(state.params, sample, train=False)
     c_params = pixelcnn.conditional_params_from_outputs(out, sample)
     return conditional_params_to_sample(rng, c_params)
 

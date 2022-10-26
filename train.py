@@ -72,21 +72,24 @@ class TrainState(train_state.TrainState):
     polyak_decay: float
 
 
-def create_train_state(rng, config: ml_collections.ConfigDict, init_batch: jax.numpy.ndarray):
+def create_train_state(
+    rng, config: ml_collections.ConfigDict, init_batch: jax.numpy.ndarray
+):
     rng, init_rng, dropout_rng = jax.random.split(rng, 3)
 
     cnn = model(config)
     params = cnn.init(
         {"params": init_rng, "dropout": dropout_rng}, init_batch, train=False
     )
-    tx = optax.adamw(
-        config.learning_rate,
+    learning_rate_fn = lambda step: config.learning_rate * config.lr_decay**step
+    tx = optax.adam(
+        learning_rate_fn,
         b1=0.95,
         b2=0.9995,
-        weight_decay=1-config.lr_decay
     )
     state = TrainState.create(
-            apply_fn=cnn.apply, params=params, tx=tx, polyak_decay=config.polyak_decay)
+        apply_fn=cnn.apply, params=params, tx=tx, polyak_decay=config.polyak_decay
+    )
 
     return rng, state
 
@@ -245,4 +248,6 @@ def train_and_evaluate(config: ml_collections.ConfigDict, workdir: str):
             eval_summary_writer.flush()
 
         if (step + 1) % steps_per_checkpoint == 0 or step + 1 == num_train_steps:
-            checkpoints.save_checkpoint(workdir, jax_utils.unreplicate(state), step, keep=3)
+            checkpoints.save_checkpoint(
+                workdir, jax_utils.unreplicate(state), step, keep=3
+            )

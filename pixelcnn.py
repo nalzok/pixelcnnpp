@@ -190,7 +190,7 @@ class ConvWeightNorm(nn.Module):
     transpose: bool = False
     init_scale: float = 1.0
     dtype: Any = jnp.float32
-    precision: Any = None
+    precision: Any = jax.lax.Precision.HIGHEST
 
     @nn.compact
     def __call__(self, inputs):
